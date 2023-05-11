@@ -75,33 +75,33 @@ const Confirmpayment = () => {
   let selectedMovieShowData = useSelector(state => state.SelectedShowSlice);
 
   useEffect(() => {
-    if (selectedMovieShowData.movieId) {
-      moviesListing.map(data => {
-        if (data.id === selectedMovieShowData?.movieId) {
-          setMovieShowData(data);
-        }
-      });
+    // if (selectedMovieShowData.movieId) {
+    //   moviesListing.map(data => {
+    //     if (data.id === selectedMovieShowData?.movieId) {
+    //       setMovieShowData(data);
+    //     }
+    //   });
 
-      theatreListing.map(data => {
-        if (data.id === selectedMovieShowData?.theatreId) {
-          data.show.map(time => {
-            if (time.name === selectedMovieShowData?.showType) {
-              console.log('getting Time---1', time);
-              setPrice(time.time[0].price);
-            }
-          });
-        }
-      });
+    //   theatreListing.map(data => {
+    //     if (data.id === selectedMovieShowData?.theatreId) {
+    //       data.show.map(time => {
+    //         if (time.name === selectedMovieShowData?.showType) {
+    //           console.log('getting Time---1', time);
+    //           setPrice(time.time[0].price);
+    //         }
+    //       });
+    //     }
+    //   });
 
-      let tempNameArray: string[] = [];
-      seatDatas.map(data => {
-        if (selectedMovieShowData?.selectedSeats.includes(data.id)) {
-          tempNameArray.push(data.name);
-        }
-      });
+    //   let tempNameArray: string[] = [];
+    //   seatDatas.map(data => {
+    //     if (selectedMovieShowData?.selectedSeats.includes(data.id)) {
+    //       tempNameArray.push(data.name);
+    //     }
+    //   });
 
-      setSeatNameArray(tempNameArray);
-    }
+    //   setSeatNameArray(tempNameArray);
+    // }
   }, []);
 
   const handleBookTicket = () => {

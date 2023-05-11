@@ -1,21 +1,29 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
 
 export interface SelectedShowReduxType {
-  movieId: number;
-  theatreId: string;
-  showTime: Date | null;
-  price: number;
-  showType: string;
+  screenId: number;
+  showId: number;
+  showTimes: Array<string>;
+  selectedTime: string;
   selectedSeats: Array<number>;
+  showType: string;
+  price: number;
+  showDate: Date | null | string;
+  movieName: string;
+  selectedSeatsName: Array<string>;
 }
 
 const initialState: SelectedShowReduxType = {
-  movieId: 0,
-  theatreId: '',
-  showTime: null,
-  price: 0,
+  screenId: 0,
+  showId: 0,
+  showTimes: [],
+  selectedTime: '',
+  selectedSeats: [],
   showType: '',
-  selectedSeats: []
+  price: 0,
+  showDate: null,
+  movieName: '',
+  selectedSeatsName: []
 };
 
 const SelectedShow = createSlice({
@@ -27,12 +35,16 @@ const SelectedShow = createSlice({
       { payload }: PayloadAction<SelectedShowReduxType>
     ) => {
       console.log('redux data', payload);
-      state.movieId = payload.movieId;
-      state.price = payload.price;
+      state.screenId = payload.screenId;
+      state.showId = payload.showId;
+      state.showTimes = payload.showTimes;
+      state.selectedTime = payload.selectedTime;
       state.selectedSeats = [...payload.selectedSeats];
-      state.showTime = payload.showTime;
       state.showType = payload.showType;
-      state.theatreId = payload.theatreId;
+      state.price = payload.price;
+      state.showDate = payload.showDate;
+      state.movieName = payload.movieName;
+      state.selectedSeatsName = payload.selectedSeatsName;
     }
   }
 });

@@ -8,7 +8,7 @@ import { SelectedShowReduxType } from '../../store/reducers/selected-show/Select
 
 interface detailsPageProps {
   movieShowData: moviesListingType | undefined;
-  selectedMovieShowData: SelectedShowReduxType | undefined;
+  selectedMovieShowData: SelectedShowReduxType;
   seatNameArray: Array<string>;
   handlebackpage: () => void;
 }
@@ -19,6 +19,7 @@ const detailsPage: React.FC<detailsPageProps> = ({
   seatNameArray,
   handlebackpage
 }) => {
+  console.log({ selectedMovieShowData });
   return (
     <Box sx={{ width: { lg: '40%', xs: '100%' }, paddingTop: '50px' }}>
       <Box style={{ paddingBottom: '30px' }}>
@@ -38,11 +39,9 @@ const detailsPage: React.FC<detailsPageProps> = ({
           Film name
         </Typography>
 
-        {movieShowData?.title && (
-          <Typography className={style.confirmText3name} gutterBottom>
-            {movieShowData?.title}
-          </Typography>
-        )}
+        <Typography className={style.confirmText3name} gutterBottom>
+          {selectedMovieShowData.movieName}
+        </Typography>
       </Box>
 
       <Divider style={{ width: '85%' }} />
@@ -53,11 +52,12 @@ const detailsPage: React.FC<detailsPageProps> = ({
         <Typography className={style.confirmText3} gutterBottom>
           date
         </Typography>
-        {selectedMovieShowData?.showTime && (
+
+        {selectedMovieShowData?.showDate && (
           <Typography className={style.confirmText3name} gutterBottom>
-            {format(selectedMovieShowData?.showTime, 'EEEE')},
-            {format(selectedMovieShowData?.showTime, 'd LLLL')} -{' '}
-            {format(selectedMovieShowData?.showTime, 'y')}
+            {format(selectedMovieShowData.showDate, 'EEEE')},
+            {format(selectedMovieShowData.showDate, 'd LLLL')} -{' '}
+            {format(selectedMovieShowData.showDate, 'y')}
           </Typography>
         )}
       </Box>
@@ -85,9 +85,10 @@ const detailsPage: React.FC<detailsPageProps> = ({
           <Typography className={style.confirmText3} gutterBottom>
             Time
           </Typography>
-          {selectedMovieShowData?.showTime && (
+          {selectedMovieShowData?.selectedTime && (
             <Typography className={style.confirmText3name} gutterBottom>
-              {(selectedMovieShowData?.showTime).getHours()}:00
+              {selectedMovieShowData?.selectedTime.split(':')[0]}:
+              {selectedMovieShowData?.selectedTime.split(':')[1]}
             </Typography>
           )}
         </Box>
@@ -102,7 +103,7 @@ const detailsPage: React.FC<detailsPageProps> = ({
 
         <Box sx={{ display: 'flex', flexWrap: 'wrap' }}>
           <Typography className={style.confirmText3name} gutterBottom>
-            {seatNameArray.toString()}
+            {selectedMovieShowData?.selectedSeatsName.toString()}
           </Typography>
         </Box>
       </Box>

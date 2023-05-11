@@ -4,7 +4,7 @@ import { SelectedMoviesType } from '../types/redux/selectedMovies.type';
 import { SelectedShowReduxType } from './reducers/selected-show/SelectedShow.slice';
 
 export interface RootReduxState {
-  dataSelectedSlice: SelectedMoviesType;
+  // dataSelectedSlice: SelectedMoviesType;
   SelectedShowSlice: SelectedShowReduxType;
 }
 

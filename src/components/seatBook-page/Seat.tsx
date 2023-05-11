@@ -11,18 +11,19 @@ import KeyboardArrowUpIcon from '@mui/icons-material/KeyboardArrowUp';
 import KeyboardArrowDownSharpIcon from '@mui/icons-material/KeyboardArrowDownSharp';
 import { timeArrayType } from '../../types/constants/timeArray.type';
 import { isPast } from 'date-fns';
+import { screenSeatApiType } from '../../api/ScreenSeat/screenSeatApi.type';
 
 interface SeatProps {
   movieShowData: SelectedShowReduxType | undefined;
-  seatData: Array<seatDatasType>;
-  timeArray: Array<Date>;
-  time: Date | null;
+  seatData: screenSeatApiType[];
+  timeArray: Array<string>;
+  time: string;
   isShowTime: boolean;
   seatId: Array<number>;
   selectedShowTimeHandle: () => void;
-  handleClickSelectedTime: (selectTime: Date) => void;
+  handleClickSelectedTime: (selectTime: string) => void;
   handleShowTime: () => void;
-  handleSelectSeat: (data: seatDatasType) => void;
+  handleSelectSeat: (data: screenSeatApiType) => void;
 }
 
 const Seat: React.FC<SeatProps> = ({
@@ -39,6 +40,7 @@ const Seat: React.FC<SeatProps> = ({
 }) => {
   console.log({ timeArray });
   console.log('vvvv', time);
+  console.log({ seatData });
   return (
     <>
       <Box className={style.divmainseatbook}>
@@ -102,7 +104,9 @@ const Seat: React.FC<SeatProps> = ({
                       }}
                       onClick={handleShowTime}
                       gutterBottom>
-                      {time && time.getHours()}:00
+                      {/* {time && time.getHours()}:00 */}
+                      {/* 7:00 */}
+                      {time.split(':')[0]}:{time.split(':')[1]}
                     </Typography>
                     <Box>
                       <KeyboardArrowDownSharpIcon
@@ -134,10 +138,11 @@ const Seat: React.FC<SeatProps> = ({
                               marginTop: '10px',
                               marginLeft: '5px'
                             }}
-                            disabled={isPast(data)}
+                            // disabled={isPast(data)}
                             onClick={() => handleClickSelectedTime(data)}
                             id="card">
-                            {data.getHours()}:00
+                            {/* {data.getHours()}:00 */}
+                            {data.split(':')[0]}:{data.split(':')[1]}
                           </Button>
                         </>
                       );
@@ -163,7 +168,8 @@ const Seat: React.FC<SeatProps> = ({
                       }}
                       onClick={selectedShowTimeHandle}
                       gutterBottom>
-                      {time && time.getHours()}:00
+                      {/* {time && time.getHours()}:00 */}
+                      {time.split(':')[0]}:{time.split(':')[1]}
                     </Typography>
                     <Box>
                       <KeyboardArrowUpIcon
@@ -213,7 +219,7 @@ const Seat: React.FC<SeatProps> = ({
                     <Box
                       style={{
                         marginRight:
-                          data.name.split('').splice(1, data.name.split('').length).join('') ===
+                          data.seat.split('').splice(1, data.seat.split('').length).join('') ===
                           '10'
                             ? '100px'
                             : '0px'
@@ -222,12 +228,12 @@ const Seat: React.FC<SeatProps> = ({
                         sx={{
                           border: '1px solid #5A637A',
                           borderRadius: '6px',
-                          cursor: data.Booked ? '' : 'pointer',
-                          backgroundColor: data.Booked
-                            ? '#1a2c50'
-                            : seatId.includes(data.id)
-                            ? '#118EEA'
-                            : '#fff'
+                          cursor: seatId.includes(data.id) ? '' : 'pointer',
+                          backgroundColor:
+                            // :
+                            // data.Booked
+                            // ? '#1a2c50'
+                            seatId.includes(data.id) ? '#118EEA' : '#fff'
                         }}
                         className={style.cardboxseat}
                         id="card"
@@ -241,14 +247,14 @@ const Seat: React.FC<SeatProps> = ({
                           <Typography
                             className={style.seatText2}
                             sx={{
-                              color: data.Booked
-                                ? '#fff'
-                                : seatId.includes(data.id)
-                                ? '#fff'
-                                : '#1a2c50'
+                              color:
+                                // color: data.Booked
+                                //   ? '#fff':
+                                seatId.includes(data.id) ? '#fff' : '#1a2c50'
                             }}
                             gutterBottom>
-                            {data.name}
+                            {/* {data.name} */}
+                            {data.seat}
                           </Typography>
                         </CardContent>
                       </Card>

@@ -28,7 +28,7 @@ import {
 import { GetServerSideProps } from 'next';
 import MaxWidthWrapper from '../../src/components/common/MaxWidthWrapper';
 import { moviesListing } from '../../src/data/mainData';
-import { getData } from '../../src/store/reducers/dataSelected/dataSelected.slice';
+// import { getData } from '../../src/store/reducers/dataSelected/dataSelected.slice';
 import { selectedTimeDataType } from '../../src/types/constants/timeData.type';
 import { timeSlotType } from '../../src/types/constants/timeSlots.type';
 
@@ -64,7 +64,7 @@ interface SelectedMoviePageProps {
 
 const SelectedMovie: NextPage<SelectedMoviePageProps> = ({ selectedMovieData }) => {
   // const theatreList = theatreListHandle(selectedMovieData);
-  console.log('67', selectedMovieData);
+  // console.log('67', selectedMovieData);
   let MovieShowData = useSelector(state => state.SelectedShowSlice);
 
   const router = useRouter();
@@ -78,6 +78,7 @@ const SelectedMovie: NextPage<SelectedMoviePageProps> = ({ selectedMovieData }) 
   const [selectedDate, setSelectedDate] = useState<Date>(dateListHandler()?.[0]);
   // const [theatreListingData, setTheatreListingData] =
   //   useState<Array<theatreListingType>>(theatreList);
+  const [theaterName, setTheaterName] = useState<string>();
 
   const [theatreListingData, setTheatreListingData] = useState<Array<any>>();
 
@@ -114,7 +115,8 @@ const SelectedMovie: NextPage<SelectedMoviePageProps> = ({ selectedMovieData }) 
                 showId: value.id,
                 movieId: value.movie.id,
                 screenId: value.screen.id,
-                theaterId: value.screen.theater.id
+                theaterId: value.screen.theater.id,
+                movieNAme: value.movie.title
               }
             ]
           : [
@@ -126,7 +128,8 @@ const SelectedMovie: NextPage<SelectedMoviePageProps> = ({ selectedMovieData }) 
                 showId: value.id,
                 movieId: value.movie.id,
                 screenId: value.screen.id,
-                theaterId: value.screen.theater.id
+                theaterId: value.screen.theater.id,
+                movieNAme: value.movie.title
               }
             ];
 
@@ -152,7 +155,8 @@ const SelectedMovie: NextPage<SelectedMoviePageProps> = ({ selectedMovieData }) 
               showId: value.id,
               movieId: value.movie.id,
               screenId: value.screen.id,
-              theaterId: value.screen.theater.id
+              theaterId: value.screen.theater.id,
+              movieNAme: value.movie.title
             }
           ]
           //showId: value.id, movieId: value.movie.id, screenId : value.screen.id, theaterId: value.screen.theater.id
@@ -179,30 +183,40 @@ const SelectedMovie: NextPage<SelectedMoviePageProps> = ({ selectedMovieData }) 
     screen: any,
     screenId: number,
     showId: number,
-    showTimes: string[],
+    // showTimes: string[],
     selectedTime: string,
-    screenType: string
+    screenType: string,
+    price: number,
+    theaterName: string,
+    movieName: string
   ) => {
+    let showTimesArray: any = [];
+    setTheaterName(theaterName);
+    console.log('screnDaa11', screenType);
+    screen.map((data: any) => {
+      if (data.screenname === screenType) {
+        showTimesArray.push(data.time);
+      }
+    });
+    console.log('showTimesArray11', showTimesArray);
     if (selectedDate) {
       if (selectedMovieData) {
         setIsShow(true);
 
-        // dispatch(
-        //   setSelectedShow({
-        //     movieId: selectedMovieData?.id | 0,
-        //     price: time.price,
-        //     selectedSeats: [],
-        //     showTime: new Date(
-        //       getYear(selectedDate),
-        //       getMonth(selectedDate),
-        //       getDate(selectedDate),
-        //       time.time.getHours(),
-        //       0
-        //     ),
-        //     showType: theatreId,
-        //     theatreId: theatreScreenName
-        //   })
-        // );
+        dispatch(
+          setSelectedShow({
+            screenId: screenId,
+            showId: showId,
+            showTimes: showTimesArray,
+            selectedTime: selectedTime,
+            selectedSeats: [],
+            showType: screenType,
+            price: price,
+            showDate: selectedDate,
+            movieName: movieName,
+            selectedSeatsName: []
+          })
+        );
       }
       handleClose();
     } else {
@@ -270,7 +284,6 @@ const SelectedMovie: NextPage<SelectedMoviePageProps> = ({ selectedMovieData }) 
                 {/* <AreaDropdown changeSelectedAreaHandle={changeSelectedAreaHandle} /> */}
                 <SearchBox />
                 <TheatreData
-                  selectedMovieData={selectedMovieData}
                   theatreListingData={theatreListingData}
                   selectedDate={selectedDate}
                   selectShowHandle={selectShowHandle}
@@ -278,13 +291,13 @@ const SelectedMovie: NextPage<SelectedMoviePageProps> = ({ selectedMovieData }) 
               </Box>
             </Grid>
 
-            {
-              isShow && ''
-              // <SelectedMovieShow
-              //   selectedMovieData={selectedMovieData}
-              //   MovieShowData={MovieShowData}
-              // />
-            }
+            {isShow && (
+              <SelectedMovieShow
+                selectedMovieData={selectedMovieData}
+                MovieShowData={MovieShowData}
+                theaterName={theaterName}
+              />
+            )}
           </Grid>
         </Box>
 
@@ -295,12 +308,8 @@ const SelectedMovie: NextPage<SelectedMoviePageProps> = ({ selectedMovieData }) 
 };
 
 export const getServerSideProps: GetServerSideProps = async context => {
-  console.log('params12133777777', context?.params?.movieSlug);
   let slug: string | string[] | undefined = context?.params?.movieSlug;
-
-  console.log('SLUG121', slug);
   const movie = await getShowsApi(slug);
-  console.trace(movie);
   return {
     props: { selectedMovieData: movie }
   };

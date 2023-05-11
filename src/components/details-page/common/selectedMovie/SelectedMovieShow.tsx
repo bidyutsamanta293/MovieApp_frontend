@@ -7,20 +7,25 @@ import { SelectedShowReduxType } from '../../../../store/reducers/selected-show/
 import { useRouter } from 'next/router';
 import { format } from 'date-fns';
 import { theatreListing } from '../../../../data/mainData';
+import { showsApiType } from '../../../../api/shows/showsApi.type';
 
 interface SelectedMovieShowProps {
-  selectedMovieData: moviesListingType | undefined;
+  selectedMovieData: showsApiType[];
   MovieShowData: SelectedShowReduxType;
+  theaterName: string | undefined;
 }
 
 const SelectedMovieShow: React.FC<SelectedMovieShowProps> = ({
   selectedMovieData,
-  MovieShowData
+  MovieShowData,
+  theaterName
 }) => {
   const router = useRouter();
   useEffect(() => {
     console.log('MovieShowData2222', MovieShowData, selectedMovieData);
   }, []);
+
+  console.log({ selectedMovieData });
 
   const handleClickContinue = () => {
     router.push({ pathname: '/seatbook' });
@@ -41,12 +46,17 @@ const SelectedMovieShow: React.FC<SelectedMovieShowProps> = ({
               height: '50vh',
               overflow: 'hidden'
             }}>
-            <Image src={selectedMovieData?.linkImg || ''} alt="data" width={400} height={550} />
+            <Image
+              src={selectedMovieData[0]?.movie?.url || ''}
+              alt="data"
+              width={400}
+              height={550}
+            />
           </Box>
 
           <Box>
             <Typography variant="h4" className={style.nameMovie}>
-              {selectedMovieData?.title}
+              {selectedMovieData[0]?.movie?.title}
             </Typography>
             <Box
               sx={{
@@ -59,7 +69,7 @@ const SelectedMovieShow: React.FC<SelectedMovieShowProps> = ({
                 Genre
               </Typography>
               <Typography variant="h4" className={style.category2}>
-                {selectedMovieData?.genre}
+                {selectedMovieData[0]?.movie?.genre}
               </Typography>
             </Box>
             <Box
@@ -73,7 +83,7 @@ const SelectedMovieShow: React.FC<SelectedMovieShowProps> = ({
                 Durasi
               </Typography>
               <Typography variant="h4" className={style.category2}>
-                {selectedMovieData?.duration} - minutes
+                {selectedMovieData[0]?.movie?.duration}
               </Typography>
             </Box>
             <Box
@@ -87,7 +97,7 @@ const SelectedMovieShow: React.FC<SelectedMovieShowProps> = ({
                 Sutradara
               </Typography>
               <Typography variant="h4" className={style.category2}>
-                {selectedMovieData?.director}
+                {selectedMovieData[0]?.movie?.director}
               </Typography>
             </Box>
             <Box
@@ -101,7 +111,7 @@ const SelectedMovieShow: React.FC<SelectedMovieShowProps> = ({
                 Rating Usia
               </Typography>
               <Typography variant="h4" className={style.category2}>
-                {selectedMovieData?.rating1}
+                {selectedMovieData[0]?.movie?.rating}
               </Typography>
             </Box>
           </Box>
@@ -121,30 +131,26 @@ const SelectedMovieShow: React.FC<SelectedMovieShowProps> = ({
               id="card"
               className={style.cardbooking}>
               <CardContent style={{ paddingTop: '25px', paddingLeft: '18px' }}>
-                {theatreListing.map(data => {
-                  if (MovieShowData.theatreId === data.id) {
-                    return (
-                      <>
-                        <Typography
-                          className={style.selectThatre}
-                          sx={{ fontSize: 14 }}
-                          color="text.secondary"
-                          gutterBottom>
-                          {data.name}
-                        </Typography>
-                      </>
-                    );
-                  }
-                })}
+                <Typography
+                  className={style.selectThatre}
+                  sx={{ fontSize: 14 }}
+                  color="text.secondary"
+                  gutterBottom>
+                  {/* {data.name} */}
+                  {theaterName}
+                </Typography>
 
-                {MovieShowData.showTime && (
+                {MovieShowData.showDate && (
                   <Typography
                     className={style.selectThatre2}
                     sx={{ fontSize: 14 }}
                     color="text.secondary"
                     gutterBottom>
-                    {format(MovieShowData.showTime, 'E')},{format(MovieShowData?.showTime, 'd LLL')}{' '}
-                    - {format(MovieShowData?.showTime, 'y')}
+                    {format(MovieShowData.showDate, 'E')} ,
+                    {format(MovieShowData?.showDate, 'd LLL')} -{' '}
+                    {format(MovieShowData?.showDate, 'y')}
+                    {/* {MovieShowData?.showDate} */}
+                    {/* {format(new Date(MovieShowData?.showDate), 'LLLL')} */}
                   </Typography>
                 )}
                 <Box
@@ -160,13 +166,14 @@ const SelectedMovieShow: React.FC<SelectedMovieShowProps> = ({
                     {MovieShowData?.showType}
                   </Typography>
 
-                  {MovieShowData.showTime && (
+                  {MovieShowData.selectedTime && (
                     <Typography
                       className={style.selectThatre3}
                       sx={{ fontSize: 14 }}
                       color="text.secondary"
                       gutterBottom>
-                      {MovieShowData.showTime.getHours()}:00
+                      {MovieShowData.selectedTime.split(':')[0]}:
+                      {MovieShowData.selectedTime.split(':')[1]}
                     </Typography>
                   )}
                 </Box>

@@ -12,20 +12,22 @@ import { timePriceType } from '../../../types/constants/timePrice.type';
 
 interface TheatreDataProps {
   theatreListingData: any;
-  selectedMovieData: moviesListingType | undefined;
   selectedDate: Date;
   selectShowHandle: (
-    time: timePriceType,
-    timeArray: timePriceType[],
-    theatreName: string,
-    theatreId: string,
-    theatreScreenName: string
+    screen: any,
+    screenId: number,
+    showId: number,
+    // showTimes: string[],
+    selectedTime: string,
+    screenType: string,
+    price: number,
+    theaterName: string,
+    movieName: string
   ) => void;
 }
 
 const TheatreData: React.FC<TheatreDataProps> = ({
   theatreListingData,
-  selectedMovieData,
   selectedDate,
   selectShowHandle
 }) => {
@@ -187,11 +189,14 @@ const TheatreData: React.FC<TheatreDataProps> = ({
                                       }
                                       onClick={() =>
                                         selectShowHandle(
-                                          data,
-                                          type.time,
-                                          item.name,
-                                          type.name,
-                                          item.id
+                                          item.screen,
+                                          data.screenId,
+                                          data.showId,
+                                          data.time,
+                                          data.screenname,
+                                          data.price,
+                                          item.theatreName,
+                                          data.movieNAme
                                         )
                                       }>
                                       {data.time.split(':')[0]}:{data.time.split(':')[1]}

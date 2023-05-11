@@ -16,7 +16,7 @@ import Alert from '@mui/material/Alert';
 import { useSelector, useDispatch } from '../src/store/index';
 
 // import { useDispatch } from '../src/store';
-import { getData } from '../src/store/reducers/dataSelected/dataSelected.slice';
+// import { getData } from '../src/store/reducers/dataSelected/dataSelected.slice';
 
 import { seatDatas, theatreListing } from '../src/data/mainData';
 import { seatDatasType } from '../src/types/constants/seatDatas.type';
@@ -33,6 +33,9 @@ import {
   setSelectedShow
 } from '../src/store/reducers/selected-show/SelectedShow.slice';
 import Seat from '../src/components/seatBook-page/Seat';
+import { screenSeatApi } from '../src/api/ScreenSeat';
+import { screenSeatApiType } from '../src/api/ScreenSeat/screenSeatApi.type';
+import { createBookingApi } from '../src/api/booking';
 
 const Seatbook = () => {
   const router = useRouter();
@@ -42,10 +45,10 @@ const Seatbook = () => {
 
   const dispatch = useDispatch();
 
-  const [seatData, setSeatData] = useState<Array<seatDatasType>>([]);
+  const [seatData, setSeatData] = useState<screenSeatApiType[]>([]);
 
   const [showKursi, setShowKursi] = useState<boolean>(false);
-  const [time, setTime] = useState<Date | null>(selectedMovieShowData.showTime);
+  const [time, setTime] = useState<string>(selectedMovieShowData?.selectedTime);
 
   const [passingData, setPassingData] = useState([]);
   const [seatId, setSeatId] = useState<Array<number>>([]);
@@ -58,45 +61,55 @@ const Seatbook = () => {
   const [isShowTime, setIsShowTime] = useState<boolean>(false);
 
   // let tempArray: any = [];
+
+  useEffect(() => {
+    if (router.isReady) {
+      getAllSeats();
+    }
+  }, [router.isReady]);
+
   useEffect(() => {
     // if (selectedMovieShowData?.movieId > 0) {
-    setSeatData(seatDatas);
+
+    // getAllSeats();
+    // setSeatData(seatDatas);
     console.log('selectedMovieShowData', selectedMovieShowData);
     setMovieShowData(selectedMovieShowData);
 
     console.log('timettttt---', isShowTime);
     let tempArray: any = [];
-    theatreListing.map(data => {
-      if (data.id === selectedMovieShowData?.theatreId) {
-        // console.log('dta get--->', data);
-        data.show.map(time => {
-          if (time.name === selectedMovieShowData?.showType) {
-            console.log('getting Time---', time);
-            setPrice(time.time[0].price);
+    // theatreListing.map(data => {
+    //   if (data.id === selectedMovieShowData?.theatreId) {
+    //     // console.log('dta get--->', data);
+    //     data.show.map(time => {
+    //       if (time.name === selectedMovieShowData?.showType) {
+    //         console.log('getting Time---', time);
+    //         setPrice(time.time[0].price);
 
-            console.log('first', time.time);
-            time.time.map(item => {
-              console.log('item1111', item);
-              if (selectedMovieShowData?.showTime) {
-                tempArray.push(
-                  new Date(
-                    getYear(selectedMovieShowData?.showTime),
-                    getMonth(selectedMovieShowData?.showTime),
-                    getDate(selectedMovieShowData?.showTime),
-                    item.time.getHours(),
-                    0
-                  )
-                );
-              }
-            });
-          }
-        });
-      }
-    });
+    //         console.log('first', time.time);
+    //         time.time.map(item => {
+    //           console.log('item1111', item);
+    //           if (selectedMovieShowData?.showTime) {
+    //             tempArray.push(
+    //               new Date(
+    //                 getYear(selectedMovieShowData?.showTime),
+    //                 getMonth(selectedMovieShowData?.showTime),
+    //                 getDate(selectedMovieShowData?.showTime),
+    //                 item.time.getHours(),
+    //                 0
+    //               )
+    //             );
+    //           }
+    //         });
+    //       }
+    //     });
+    //   }
+    // });
 
     console.log('tempArray', tempArray);
 
-    setTimeArray(tempArray);
+    setTimeArray(selectedMovieShowData.showTimes);
+    setPrice(selectedMovieShowData.price);
     // } else {
     //   let seatData = JSON.parse(localStorage.getItem('selectedShowData'));
     //   console.log('seatData', seatData);
@@ -136,15 +149,25 @@ const Seatbook = () => {
     // }
   }, []);
 
+  const getAllSeats = async () => {
+    const getAllSeatsData = await screenSeatApi(selectedMovieShowData.screenId);
+    console.log('getAllSeats22', getAllSeatsData);
+    await setSeatData(getAllSeatsData);
+  };
+
   useEffect(() => {
     dispatch(
       setSelectedShow({
-        movieId: selectedMovieShowData.movieId,
-        price: selectedMovieShowData.price,
-        showTime: time,
+        screenId: selectedMovieShowData.screenId,
+        showId: selectedMovieShowData.showId,
+        showTimes: selectedMovieShowData.showTimes,
+        selectedTime: time,
+        selectedSeats: seatId,
         showType: selectedMovieShowData.showType,
-        theatreId: selectedMovieShowData.theatreId,
-        selectedSeats: seatId
+        price: selectedMovieShowData.price,
+        showDate: selectedMovieShowData.showDate,
+        movieName: selectedMovieShowData.movieName,
+        selectedSeatsName: seatName
       })
     );
   }, [seatId]);
@@ -203,30 +226,34 @@ const Seatbook = () => {
     setIsShowTime(true);
   };
 
-  const handleClickSelectedTime = (selectTime: Date) => {
+  const handleClickSelectedTime = (selectTime: string) => {
     setTime(selectTime);
     setIsShowTime(false);
     dispatch(
       setSelectedShow({
-        movieId: selectedMovieShowData.movieId,
-        price: selectedMovieShowData.price,
-        showTime: selectTime,
+        screenId: selectedMovieShowData.screenId,
+        showId: selectedMovieShowData.showId,
+        showTimes: selectedMovieShowData.showTimes,
+        selectedTime: selectTime,
+        selectedSeats: seatId,
         showType: selectedMovieShowData.showType,
-        theatreId: selectedMovieShowData.theatreId,
-        selectedSeats: seatId
+        price: selectedMovieShowData.price,
+        showDate: selectedMovieShowData.showDate,
+        movieName: selectedMovieShowData.movieName,
+        selectedSeatsName: seatName
       })
     );
   };
 
-  const handleSelectSeat = (data: seatDatasType) => {
+  const handleSelectSeat = (data: any) => {
     if (!data.Booked) {
       if (seatId.includes(data.id)) {
         setSeatId(seatId.filter(obj => obj !== data.id));
-        setSeatName(seatName.filter(obj => obj !== data.name));
+        setSeatName(seatName.filter(obj => obj !== data.seat));
       } else {
         if (seatId.length < 6) {
           setSeatId([...seatId, data.id]);
-          setSeatName([...seatName, data.name]);
+          setSeatName([...seatName, data.seat]);
         } else {
           setShowKursi(true);
         }
@@ -234,19 +261,25 @@ const Seatbook = () => {
     }
   };
 
-  const handleClickConfirmBooking = () => {
+  const handleClickConfirmBooking = async () => {
     if (seatId.length > 0) {
-      localStorage.setItem(
-        'selectedShowData',
-        JSON.stringify({
-          movieId: selectedMovieShowData.movieId,
-          price: selectedMovieShowData.price,
-          showTime: time,
-          showType: selectedMovieShowData.showType,
-          theatreId: selectedMovieShowData.theatreId,
-          selectedSeats: seatId
-        })
-      );
+      // localStorage.setItem(
+      //   'selectedShowData',
+      //   JSON.stringify({
+      //     movieId: selectedMovieShowData.movieId,
+      //     price: selectedMovieShowData.price,
+      //     showTime: time,
+      //     showType: selectedMovieShowData.showType,
+      //     theatreId: selectedMovieShowData.theatreId,
+      //     selectedSeats: seatId
+      //   })
+      // );
+      let body = {
+        user: 2,
+        show: selectedMovieShowData.showId
+      };
+      const bookingSeat = await createBookingApi(body);
+      console.log({ bookingSeat });
 
       router.push('./confirmpayment/');
     }
@@ -260,6 +293,8 @@ const Seatbook = () => {
     setShowKursi(false);
   };
 
+  console.log('seatData', seatData);
+
   return (
     <AuthComponent>
       <MaxWidthWrapper>
@@ -271,7 +306,7 @@ const Seatbook = () => {
           </Snackbar>
         )}
         <Header />
-        {seatData && (
+        {seatData.length > 0 && (
           <Seat
             movieShowData={movieShowData}
             seatData={seatData}
