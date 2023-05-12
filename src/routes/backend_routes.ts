@@ -10,5 +10,8 @@ export const backend_routes = {
   },
   bookingSeat: {
     create_Booking: `http://localhost:8082/booking`
+  },
+  confirmSeat: {
+    create_confirm_booking: `http://localhost:8082/seat_book`
   }
 };

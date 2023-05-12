@@ -167,7 +167,8 @@ const Seatbook = () => {
         price: selectedMovieShowData.price,
         showDate: selectedMovieShowData.showDate,
         movieName: selectedMovieShowData.movieName,
-        selectedSeatsName: seatName
+        selectedSeatsName: seatName,
+        bookingId: 0
       })
     );
   }, [seatId]);
@@ -240,7 +241,8 @@ const Seatbook = () => {
         price: selectedMovieShowData.price,
         showDate: selectedMovieShowData.showDate,
         movieName: selectedMovieShowData.movieName,
-        selectedSeatsName: seatName
+        selectedSeatsName: seatName,
+        bookingId: 0
       })
     );
   };
@@ -280,6 +282,21 @@ const Seatbook = () => {
       };
       const bookingSeat = await createBookingApi(body);
       console.log({ bookingSeat });
+      dispatch(
+        setSelectedShow({
+          screenId: selectedMovieShowData.screenId,
+          showId: selectedMovieShowData.showId,
+          showTimes: selectedMovieShowData.showTimes,
+          selectedTime: selectedMovieShowData.selectedTime,
+          selectedSeats: seatId,
+          showType: selectedMovieShowData.showType,
+          price: selectedMovieShowData.price,
+          showDate: selectedMovieShowData.showDate,
+          movieName: selectedMovieShowData.movieName,
+          selectedSeatsName: seatName,
+          bookingId: bookingSeat.id
+        })
+      );
 
       router.push('./confirmpayment/');
     }

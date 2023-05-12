@@ -214,7 +214,8 @@ const SelectedMovie: NextPage<SelectedMoviePageProps> = ({ selectedMovieData }) 
             price: price,
             showDate: selectedDate,
             movieName: movieName,
-            selectedSeatsName: []
+            selectedSeatsName: [],
+            bookingId: 0
           })
         );
       }

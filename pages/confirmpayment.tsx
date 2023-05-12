@@ -52,6 +52,7 @@ import { padding } from '@mui/system';
 import { seatDatas } from '../src/data/mainData';
 import DetailsPage from '../src/components/confirmPayment-page/detailsPage';
 import Payment from '../src/components/confirmPayment-page/Payment';
+import { confirmSeatApi } from '../src/api/seat';
 
 const Confirmpayment = () => {
   const router = useRouter();
@@ -81,7 +82,6 @@ const Confirmpayment = () => {
     //       setMovieShowData(data);
     //     }
     //   });
-
     //   theatreListing.map(data => {
     //     if (data.id === selectedMovieShowData?.theatreId) {
     //       data.show.map(time => {
@@ -92,19 +92,27 @@ const Confirmpayment = () => {
     //       });
     //     }
     //   });
-
     //   let tempNameArray: string[] = [];
     //   seatDatas.map(data => {
     //     if (selectedMovieShowData?.selectedSeats.includes(data.id)) {
     //       tempNameArray.push(data.name);
     //     }
     //   });
-
     //   setSeatNameArray(tempNameArray);
     // }
   }, []);
 
-  const handleBookTicket = () => {
+  const handleBookTicket = async () => {
+    for (let i = 0; i < selectedMovieShowData?.selectedSeats?.length; i++) {
+      let bodyData = {
+        booking: 7,
+        screenSeat: selectedMovieShowData?.selectedSeats?.[i]
+      };
+
+      const confirmSeat = await confirmSeatApi(bodyData);
+      console.log('confirmSeat', confirmSeat);
+    }
+
     router.push('./paymentsuccess/');
   };
 
@@ -113,7 +121,6 @@ const Confirmpayment = () => {
   };
 
   const AddCoupen = () => {
-
     if (coupenPriceText) {
       if (
         selectedMovieShowData?.price * selectedMovieShowData?.selectedSeats.length >

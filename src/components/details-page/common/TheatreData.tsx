@@ -151,6 +151,13 @@ const TheatreData: React.FC<TheatreDataProps> = ({
 
                         <Box className={style.griditemdiv}>
                           {item.screen.map((data: any) => {
+                            {
+                              console.log(
+                                'getTime11',
+                                new Date().getHours(),
+                                data.time.split(':')[0]
+                              );
+                            }
                             if (type === data.screenname)
                               return (
                                 <>

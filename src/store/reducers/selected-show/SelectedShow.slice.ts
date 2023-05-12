@@ -11,6 +11,7 @@ export interface SelectedShowReduxType {
   showDate: Date | null | string;
   movieName: string;
   selectedSeatsName: Array<string>;
+  bookingId: number;
 }
 
 const initialState: SelectedShowReduxType = {
@@ -23,7 +24,8 @@ const initialState: SelectedShowReduxType = {
   price: 0,
   showDate: null,
   movieName: '',
-  selectedSeatsName: []
+  selectedSeatsName: [],
+  bookingId: 0
 };
 
 const SelectedShow = createSlice({
@@ -45,6 +47,7 @@ const SelectedShow = createSlice({
       state.showDate = payload.showDate;
       state.movieName = payload.movieName;
       state.selectedSeatsName = payload.selectedSeatsName;
+      state.bookingId = payload.bookingId;
     }
   }
 });
